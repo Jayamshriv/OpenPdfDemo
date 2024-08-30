@@ -53,6 +53,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.os.BuildCompat
 
 val REQUEST_CODE = 100
@@ -212,11 +214,10 @@ fun savePdfToDownloads(context: Context, baseFileName: String) {
     val canvas: Canvas = page.canvas
     val paint = Paint()
 
-    // Add Header
-    paint.textSize = 20f
-    canvas.drawText("Company Name", 50f, 50f, paint)  // Company name or title
-    paint.textSize = 12f
-    canvas.drawText("Invoice", 50f, 70f, paint) // Invoice title
+    // Title
+    paint.textSize = 28f
+    paint.color = Color.Black.toArgb()
+    canvas.drawText("INVOICE", 270f, 50f, paint)
 
     // Add an Image (e.g., a logo)
     val logoBitmap: Bitmap? = BitmapFactory.decodeResource(context.resources, R.drawable.star_on)  // Replace with your logo resource
@@ -224,18 +225,81 @@ fun savePdfToDownloads(context: Context, baseFileName: String) {
         canvas.drawBitmap(it, 450f, 30f, paint)  // Position the logo in the header
     }
 
+    // Invoice Number and Date
+    paint.textSize = 12f
+//    canvas.drawText("Invoice Number: INV-01234", 400f, 70f, paint)
+//    canvas.drawText("Date: April 22, 2023", 400f, 90f, paint)
+
+    // Bill To
+    paint.textSize = 16f
+    paint.color = Color.Black.toArgb()
+    canvas.drawText("BILL TO:", 50f, 150f, paint)
+
+    paint.textSize = 12f
+    paint.color = Color.Black.toArgb()
+    canvas.drawText("Jayam ", 50f, 170f, paint)
+    canvas.drawText("123 Anywhere St.,", 50f, 190f, paint)
+    canvas.drawText("Any City, ST 12345", 50f, 210f, paint)
+    canvas.drawText("Date : 8/29/2024", 50f, 220f, paint)
+
     // Draw some lines (Header and Footer separation)
     canvas.drawLine(0f, 100f, 595f, 100f, paint) // Line under the header
-    canvas.drawLine(0f, 780f, 595f, 780f, paint) // Line above the footer
+    canvas.drawLine(0f, 800f, 595f, 800f, paint) // Line above the footer
+
+    // Payment Information
+    paint.textSize = 14f
+    paint.color = Color.Black.toArgb()
+    canvas.drawText("PAYMENT TO:", 350f, 150f, paint)
+
+    paint.textSize = 12f
+    paint.color = Color.Black.toArgb()
+    canvas.drawText("anaakdnakdkasbda", 350f, 170f, paint)
+    canvas.drawText("danaldaksdna ", 350f, 190f, paint)
+    canvas.drawText("asdasdasdjnn ", 350f, 210f, paint)
+
+    // Item Table
+    paint.textSize = 12f
+    paint.color = Color.Black.toArgb()
+    paint.style = Paint.Style.STROKE
+    canvas.drawRect(50f, 250f, 562f, 450f, paint)
+
+    paint.style = Paint.Style.FILL
+    paint.color = Color.White.toArgb()
+    canvas.drawRect(50f, 250f, 562f, 275f, paint)
+
+    paint.color = Color.Black.toArgb()
+    canvas.drawText("ITEM", 60f, 270f, paint)
+    canvas.drawText("DESCRIPTION", 160f, 270f, paint)
+    canvas.drawText("MONTHS", 420f, 270f, paint)
+    canvas.drawText("AMOUNT", 500f, 270f, paint)
+
+    var totalAmont = 0.0
+    // Line items
+    val items = listOf(
+        Triple("1.", "Fees for MemberShip", "5"),
+    )
+
+
+
+    var currentY = 300f
+    items.forEach { item ->
+        canvas.drawText(item.first, 60f, currentY, paint)
+        canvas.drawText(item.second, 160f, currentY, paint)
+        canvas.drawText(item.third, 420f, currentY, paint)
+        canvas.drawText((item.third.toInt()*350).toString(), 500f, currentY, paint)
+        totalAmont+= item.third.toDouble()*350.0
+        currentY += 25f
+    }
 
     // Add Footer
     paint.textSize = 12f
     canvas.drawText("Powered by Attendify", 50f, 820f, paint)  // Contact information
+    // Sub Total and Sales Tax
+    canvas.drawText("Sub Total:", 400f, currentY + 50f, paint)
+    canvas.drawText("$totalAmont", 500f, currentY + 50f, paint)
+//    canvas.drawText("Sales Tax:", 400f, currentY + 70f, paint)
+//    canvas.drawText("$3,150", 500f, currentY + 70f, paint)
 
-    // Add Content (Items, Prices, etc.)
-    paint.textSize = 16f
-    canvas.drawText("Fees Receipt for Member Ship ", 50f, 150f, paint)
-    canvas.drawText("Item 2: 200", 50f, 200f, paint)
 
     // Finish the page
     pdfDocument.finishPage(page)
